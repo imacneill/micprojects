@@ -1,4 +1,4 @@
-# makefile for SeedAlgorithm Code
+# makefile for testing the benchmark tools
 
 # Compiler
 CC=icc
@@ -14,4 +14,4 @@ test: test.cc BenchmarkTools.cc BenchmarkTools.h
 
 
 clean:
-	rm -f test
+	rm -f test	
