@@ -21,6 +21,7 @@ public:
   bool done() const;
   void timestart();
   void timestop();
+  void timereset();
   std::string name() const;
   std::string report() const;
 

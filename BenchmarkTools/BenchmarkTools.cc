@@ -44,6 +44,14 @@ void stopwatch::timestop(){
 	stopped_ = true;
   }
 }
+void stopwatch::timereset(){
+  start_=0;
+  stop_=0;
+  elapsed_=0;
+  started_=false;
+  stopped_=false;
+}
+
 std::string stopwatch::name() const {return name_;}
 
 std::string stopwatch::report() const{

@@ -12,14 +12,18 @@ BMTOOLS = ../BenchmarkTools
 
 INCLUDES = $(BMTOOLS)
 
+#DEFS =
+#DEFS = _USEsimd_
+#DEFS = _USEparallel_
+DEFS = _USEparallelsimd_
 
 all: bmarks bmarks-mic
 
 bmarks: BasicBenchmarks.cc BasicBenchmarks.h $(BMTOOLS)/BenchmarkTools.cc $(BMTOOLS)/BenchmarkTools.h
-	$(CC) $(CFLAGS) BasicBenchmarks.cc $(BMTOOLS)/BenchmarkTools.cc -o bmarks -I$(INCLUDES)
+	$(CC) $(CFLAGS) BasicBenchmarks.cc $(BMTOOLS)/BenchmarkTools.cc -o bmarks -I$(INCLUDES) -D$(DEFS)
 
 bmarks-mic: BasicBenchmarks.cc BasicBenchmarks.h $(BMTOOLS)/BenchmarkTools.cc $(BMTOOLS)/BenchmarkTools.h
-	$(CC) $(CFLAGS) -mmic BasicBenchmarks.cc $(BMTOOLS)/BenchmarkTools.cc -o bmarks-mic -I$(INCLUDES)
+	$(CC) $(CFLAGS) -mmic BasicBenchmarks.cc $(BMTOOLS)/BenchmarkTools.cc -o bmarks-mic -I$(INCLUDES) -D$(DEFS)
 	scp bmarks-mic root@mic0:
 
 run: bmarks bmarks-mic
