@@ -52,6 +52,7 @@ int main(){
   stopwatch cpu_bm1("CPU 1", &get_cpu_time);
   wall_bm1.timestart();
   cpu_bm1.timestart();
+  //#pragma offload target (mic)
 #pragma omp parallel for simd //private(i)
   for(unsigned int i = 0; i < NENTRIES; ++i){
 	test1[i] = a[i] + b[i];

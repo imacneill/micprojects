@@ -13,9 +13,25 @@ BMTOOLS = ../BenchmarkTools
 INCLUDES = $(BMTOOLS)
 
 
-main: BasicBenchmarks.cc BasicBenchmarks.h $(BMTOOLS)/BenchmarkTools.cc $(BMTOOLS)/BenchmarkTools.h
-	$(CC) $(CFLAGS) BasicBenchmarks.cc $(BMTOOLS)/BenchmarkTools.cc -o main -I$(INCLUDES)
+all: bmarks bmarks-mic
+
+bmarks: BasicBenchmarks.cc BasicBenchmarks.h $(BMTOOLS)/BenchmarkTools.cc $(BMTOOLS)/BenchmarkTools.h
+	$(CC) $(CFLAGS) BasicBenchmarks.cc $(BMTOOLS)/BenchmarkTools.cc -o bmarks -I$(INCLUDES)
+
+bmarks-mic: BasicBenchmarks.cc BasicBenchmarks.h $(BMTOOLS)/BenchmarkTools.cc $(BMTOOLS)/BenchmarkTools.h
+	$(CC) $(CFLAGS) -mmic BasicBenchmarks.cc $(BMTOOLS)/BenchmarkTools.cc -o bmarks-mic -I$(INCLUDES)
+	scp bmarks-mic root@mic0:
+
+run: bmarks bmarks-mic
+	./bmarks
+	ssh root@mic0 ./bmarks-mic
 
 
 clean:
-	rm -f main	
+	rm -f bmarks
+
+clean-mic:
+	rm -f bmakrs-mic
+
+clean-all:
+	rm -f bmarks bmarks-mic	
