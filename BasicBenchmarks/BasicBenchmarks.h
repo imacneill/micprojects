@@ -31,14 +31,7 @@ void newArray(T*& array, unsigned int length, int allignBytes = -1, FillType fil
   fillArray(array, length, filltype);
 }
 
-template<typename T>
-T sumArray(T* array, unsigned int length){
-  T tmp = 0;
-  for(unsigned int i=0; i< length; ++i){
-	tmp+=array[i];
-  }
-  return tmp;
-}
+
 
 
 

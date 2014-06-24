@@ -40,5 +40,14 @@ private:
 std::ostream& operator<<(std::ostream& os, const stopwatch& obj);
 
 
+template<typename T>
+T sumArray(T* array, unsigned int length){
+  T tmp = 0;
+  for(unsigned int i=0; i< length; ++i){
+	tmp+=array[i];
+  }
+  return tmp;
+}
+
 
 #endif
