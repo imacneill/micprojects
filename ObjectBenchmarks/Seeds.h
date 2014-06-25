@@ -191,11 +191,14 @@ float calcResid(const Seed2D& seed);
 void calcResid(const Seed2Dsa& seed, float *resid, const int begin, const int end);
 //float calcResid(const Seed2Dsa& seed, const int i);
 float calcResid(const float x0, const float y0, const float x1, const float y1, const float x2, const float y2);
-// template <int j> float calcResid(const Seed2Dhsa<j>& seed, const int i){
-//   float slope = ((seed.y2_[i]) - (seed.y0_[i]))/((seed.x2_[i]) - (seed.x0_[i]));
-//   float intercept = (seed.y0_[i]) - slope * (seed.x0_[i]);
-//   return std::abs( slope*(seed.x0_[i]) - (seed.y0_[i]) + intercept ) / sqrt( slope*slope + intercept*intercept );
-// }
+template <int j> void calcResid(const Seed2Dhsa<j>& seed, float *resid, const int begin, const int end){
+  #pragma simd
+  for(int i = 0; i<(end-begin); ++i){
+	float slope = ((seed.y2_[i]) - (seed.y0_[i]))/((seed.x2_[i]) - (seed.x0_[i]));
+	float intercept = (seed.y0_[i]) - slope * (seed.x0_[i]);
+	resid[i+begin] = std::abs( slope*(seed.x0_[i]) - (seed.y0_[i]) + intercept ) / sqrt( slope*slope + intercept*intercept );
+  }
+}
 
 inline float calcResidIn(const Seed2D& seed){
   float slope = (seed.y2_ - seed.y0_)/(seed.x2_ - seed.x0_);

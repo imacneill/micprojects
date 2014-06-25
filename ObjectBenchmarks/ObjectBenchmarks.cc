@@ -121,6 +121,7 @@ int main(){
   if( wall_bmhsad.done() ){ std::cout<<wall_bmhsad<<std::endl; }
 
 
+  std::cout<<std::endl;
 
 
 
@@ -162,8 +163,26 @@ int main(){
   }
   wall_bmsa.timestop();
   if( wall_bmsa.done() ){ std::cout<<wall_bmsa<<std::endl; }
+
+  //struct short array hard coded
+  stopwatch wall_bmhsa("Wall Struct Short Array Hand", &get_wall_time);
+  wall_bmhsa.timestart();
+  //#pragma simd
+  //#pragma omp parallel for simd
+  for(int i = 0; i < NENTRIES_sa; ++i){
+	//#pragma simd
+	//	for(int j = 0; j < NENTRIES_sasize; ++j){
+	//  resid2Dsad[i*NENTRIES_sasize+j] = calcResid(seed2Dsa[i], j);
+	calcResid(seed2Dhsa[i], resid2Dhsa, i*NENTRIES_sasize, (i+1)*NENTRIES_sasize);
+
+	//}
+  }
+  wall_bmhsa.timestop();
+  if( wall_bmhsa.done() ){ std::cout<<wall_bmhsa<<std::endl; }
   
 
+
+  std::cout<<std::endl;
 
 
 
