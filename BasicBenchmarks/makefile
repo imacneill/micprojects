@@ -13,9 +13,9 @@ BMTOOLS = ../BenchmarkTools
 INCLUDES = $(BMTOOLS)
 
 #DEFS =
-#DEFS = _USEsimd_
+DEFS = _USEsimd_
 #DEFS = _USEparallel_
-DEFS = _USEparallelsimd_
+#DEFS = _USEparallelsimd_
 
 all: bmarks bmarks-mic
 

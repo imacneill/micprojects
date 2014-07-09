@@ -115,14 +115,23 @@ int main(){
 #ifdef _USEparallelsimd_
 #pragma omp parallel for simd
 #endif 
-  for(unsigned int i = 0; i < NENTRIES; ++i){
-	test1[i] = a[i] + b[i];
-  }
+   for(unsigned int i = 0; i < NENTRIES; ++i){
+   test1[i] = a[i] + b[i];
+   }
+  // for(int i=0; i<156250*2; ++i){
+  // 	#pragma simd
+  // 	for(int j=0; j<8; ++j){
+  // 	  test1[i*8+j] = a[i*8+j] + b[i*8+j];
+  // 	}
+  // }
   wall_bm1.timestop();
   cpu_bm1.timestop();
   if( wall_bm1.done() && cpu_bm1.done() ){
 	std::cout<<wall_bm1<<std::endl;
 	//	std::cout<<cpu_bm1<<std::endl;
+	// float gflops = 2.*156250.*16./1000000000./(float)wall_bm1.elapsed();
+	// std::cout<< gflops <<" GFlops/sec. "<< gflops / calcFlops(HOST) *100.*6*2 <<"% of theory on host."<<std::endl;
+	// std::cout<< gflops <<" GFlops/sec. "<< gflops / calcFlops(MIC) *100.*61*2 <<"% of theory on mic."<<std::endl;
   }
 
 

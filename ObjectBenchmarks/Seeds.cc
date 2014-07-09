@@ -31,6 +31,41 @@ float calcResid(const float x0, const float y0, const float x1, const float y1, 
 
 
 
+void calcResidVectorized(Seed2D *seed, float *resid, const int begin, const int end){
+#pragma simd
+  for(int i = 0; i<(end-begin); ++i){
+	float slope = ((seed[i].y2_) - (seed[i].y0_))/((seed[i].x2_) - (seed[i].x0_));
+	float intercept = (seed[i].y0_) - slope * (seed[i].x0_);
+	// resid[i+begin] = std::abs( slope*(seed[i].x0_) - (seed[i].y0_) + intercept ) / sqrt( slope*slope + intercept*intercept );
+	resid[i+begin] = ( slope*(seed[i].x0_) - (seed[i].y0_) + intercept ) / ( slope*slope + intercept*intercept );
+  }
+}
+void calcResidVectorized(const Seed2Dsa& seed, float *resid, const int begin, const int end){
+#pragma simd
+  for(int i = 0; i<(end-begin); ++i){
+	float slope = ((seed.y2_[i]) - (seed.y0_[i]))/((seed.x2_[i]) - (seed.x0_[i]));
+	float intercept = (seed.y0_[i]) - slope * (seed.x0_[i]);
+	resid[i+begin] = std::abs( slope*(seed.x0_[i]) - (seed.y0_[i]) + intercept ) / sqrt( slope*slope + intercept*intercept );
+  }
+}
+void calcResidVectorized(float *x0, float *y0, float *x1, float *y1, float *x2, float *y2, float *resid,  int begin,  int end){
+  #pragma simd
+  for(int i = 0; i<(end-begin); ++i){
+	float slope = ((y2[i]) - (y0[i]))/((x2[i]) - (x0[i])); // 3 operations
+	float intercept = (y0[i]) - slope * (x0[i]); // 2 operations
+	//	resid[i+begin] = std::abs( slope*(x0[i]) - (y0[i]) + intercept ) / sqrt( slope*slope + intercept*intercept );
+	resid[i+begin] = (slope*(x0[i]) - (y0[i]) + intercept ) / ( slope*slope + intercept*intercept ); // 7 operations
+	// 12 operations total
+  }
+}
+
+
+
+
+
+
+
+
 void generateSeeds(Seed2D* seed2D){
   float tmp0 = distribution(generator);
   float tmp1 = distribution(generator);
@@ -58,4 +93,40 @@ float sumSeedArray(Seed2Dsa* seed2Dsa, const int length, const int arraysize){
 	}  
   }
   return tmp;
+}
+
+
+void addArrays(float *ina, float *inb, float *out, const int start, const int stop){
+  #pragma simd
+  for(int i = start; i < stop-start; ++i){
+	out[start+i]=ina[start+i]*ina[start+i] + inb[start+i]*inb[start+i]-ina[start+i]/inb[start+i];
+  }
+}
+
+void addArrays(float *ina, float *inb, float *inc, float *out, const int start, const int stop){
+  #pragma simd
+  for(int i = start; i < stop-start; ++i){
+	out[start+i]=ina[start+i] + inb[start+i] + inc[start+1]*inc[start+i] - inc[start+i]/inb[start+i];
+  }
+}
+
+void addArrays(float *ina, float *inb, float *inc, float *ind, float *out, const int start, const int stop){
+  #pragma simd
+  for(int i = start; i < stop-start; ++i){
+	out[start+i]=ina[start+i] + inb[start+i] + inc[start+i] + ind[start+i]/inc[start+i] - ind[start+i];
+  }
+}
+
+void addArrays(float *ina, float *inb, float *inc, float *ind, float *ine, float *out, const int start, const int stop){
+  #pragma simd
+  for(int i = start; i < stop-start; ++i){
+	out[start+i]=ina[start+i] + inb[start+i] + inc[start+i] + ind[start+i]/ine[start+i] - ind[start+i];
+  }
+}
+
+void addArrays(float *ina, float *inb, float *inc, float *ind, float *ine, float *inf, float *out, const int start, const int stop){
+  #pragma simd
+  for(int i = start; i < stop-start; ++i){
+	out[start+i]=ina[start+i] + inb[start+i] + inc[start+i] + ind[start+i]/ine[start+i]- inf[start+i];
+  }
 }

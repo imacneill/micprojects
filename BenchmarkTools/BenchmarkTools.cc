@@ -1,4 +1,5 @@
 #include <sstream>
+#include <iostream>
 
 #include <sys/time.h>
 #include <time.h>
@@ -11,11 +12,34 @@ double get_wall_time(){
         //  Handle error
         return 0;
     }
-    return (double)time.tv_sec + (double)time.tv_usec * .000001;
+    return (double)(time.tv_sec + time.tv_usec * .000001);
 }
 double get_cpu_time(){
     return (double)clock() / CLOCKS_PER_SEC;
 }
+
+int calcFlops(Processor type){
+  float frequency = 0; //GHz
+  float ncores = 0;
+  float nlanes = 0;
+
+  if(type == HOST){
+	frequency = 2.000003; //GHz
+	ncores = 6;
+	nlanes = 8; //256byte vector unit? with 32 byte floats
+  }
+  else if(type == MIC){
+	frequency = 1.238094; //GHz
+	ncores = 61;
+	nlanes = 16; //512byte vector unit? with 32 byte floats
+  }else{
+	std::cout<<"Unrecognized processor type in countFlops()"<<std::endl;
+  }
+
+  return frequency * ncores * nlanes *2;
+}
+
+void addArrays(float *ina, float *inb, float *out, const int start, const int stop);
 
 ///// stopwatch class functions /////
 stopwatch::stopwatch(const std::string& name, double (*watch)()):start_(0),stop_(0),elapsed_(0),started_(false),stopped_(false),name_(name){watch_=watch;}

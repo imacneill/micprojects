@@ -43,27 +43,27 @@ public:
   void setX(float *x0, float *x1, float *x2, int begin, int entries){ 
 	entries_ = entries;
 	#pragma simd
-	for(int i=0; i < entries_; ++i){
-	  x0_[i]=x0[begin+i]; 
-	  x1_[i]=x1[begin+i];  
-	  x2_[i]=x2[begin+i];
-	  y0_[i]=0;
-	  y1_[i]=1.;
-	  y2_[i]=2.;
+	for(int j=0; j < entries_; ++j){
+	  x0_[j]=x0[begin+j]; 
+	  x1_[j]=x1[begin+j];  
+	  x2_[j]=x2[begin+j];
+	  y0_[j]=0;
+	  y1_[j]=1.;
+	  y2_[j]=2.;
 	}	
   }
 
   void print(){
-	for(int i=0; i<entries_; ++i){
-	  std::cout<<x0_[i]<<" ";
+	for(int j=0; j<entries_; ++j){
+	  std::cout<<x0_[j]<<" ";
 	}
 	std::cout<<std::endl;
-	for(int i=0; i<entries_; ++i){
-	  std::cout<<x1_[i]<<" ";
+	for(int j=0; j<entries_; ++j){
+	  std::cout<<x1_[j]<<" ";
 	}
 	std::cout<<std::endl;
-	for(int i=0; i<entries_; ++i){
-	  std::cout<<x2_[i]<<" ";
+	for(int j=0; j<entries_; ++j){
+	  std::cout<<x2_[j]<<" ";
 	}
 	std::cout<<std::endl;
   }
@@ -232,6 +232,33 @@ inline float calcResidIn(const float x0, const float y0, const float x1, const f
   return std::abs( slope*x0 - y0 + intercept ) / sqrt( slope*slope + intercept*intercept );
 }
 
+
+
+
+
+void calcResidVectorized(Seed2D *seed, float *resid, const int begin, const int end);
+void calcResidVectorized(const Seed2Dsa& seed, float *resid, const int begin, const int end);
+void calcResidVectorized(float *x0, float *y0, float *x1, float *y1, float *x2, float *y2, float *resid, const int begin, const int end);
+template <int j> void calcResidVectorized(Seed2Dhsa<j> *seed, float *resid, const int begin, const int end){
+  int outer = (end-begin)/j; // will always work if end-begin is a power of 2
+  for(int i = 0; i<outer; ++i){
+#pragma simd
+	for(int k = 0; k<j; ++k){ 
+	  float slope = ((seed[i].y2_[k]) - (seed[i].y0_[k]))/((seed[i].x2_[k]) - (seed[i].x0_[k]));
+	  float intercept = (seed[i].y0_[k]) - slope * (seed[i].x0_[k]);
+	  //	  resid[i+begin] = std::abs( slope*(seed[i].x0_[k]) - (seed[i].y0_[k]) + intercept ) / sqrt( slope*slope + intercept*intercept );
+	  resid[i+begin] = ( slope*(seed[i].x0_[k]) - (seed[i].y0_[k]) + intercept ) / ( slope*slope + intercept*intercept );
+	}
+  }
+}
+
+
+
+
+
+
+
+
 //void generateSeeds(Seed2D* seed2D, Seed2Dp* seed2Dp, Seed2D64a* seed2D64a);
 void generateSeeds(Seed2D* seed2D);
 // Seed2D* generateSeed2D(const float x0, const float x1, const float x2);
@@ -242,6 +269,16 @@ float sumSeedArray(Seed2D* seed2D, const int length);
 //float sumSeedArray(Seed2Dp* seed2Dp, const int length);
 //float sumSeedArray(Seed2D64a* seed2D64a, const int length);
 float sumSeedArray(Seed2Dsa* seed2Dsa, const int length, const int arraysize);
+
+
+
+
+void addArrays(float *ina, float *inb, float *out, const int start, const int stop);
+void addArrays(float *ina, float *inb, float *inc, float *out, const int start, const int stop);
+void addArrays(float *ina, float *inb, float *inc, float *ind, float *out, const int start, const int stop);
+void addArrays(float *ina, float *inb, float *inc, float *ind, float *ine, float *out, const int start, const int stop);
+void addArrays(float *ina, float *inb, float *inc, float *ind, float *ine, float *inf, float *out, const int start, const int stop);
+
 
 
 #endif
