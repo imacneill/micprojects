@@ -253,6 +253,18 @@ template <int j> void calcResidVectorized(Seed2Dhsa<j> *seed, float *resid, cons
 }
 
 
+void calcResidVectorizedDouble(float *x0, float *y0, float *x1, float *y1, float *x2, float *y2, float *resid, const int inner, const int outer);
+template <int j> void calcResidVectorizedDouble(Seed2Dhsa<j> *seed, float *resid, const int inner, const int outer){
+  for(int i = 0; i<outer; ++i){
+#pragma simd
+	for(int k = 0; k<inner; ++k){ 
+	  float slope = ((seed[i].y2_[k]) - (seed[i].y0_[k]))/((seed[i].x2_[k]) - (seed[i].x0_[k]));
+	  float intercept = (seed[i].y0_[k]) - slope * (seed[i].x0_[k]);
+	  //	  resid[i+begin] = std::abs( slope*(seed[i].x0_[k]) - (seed[i].y0_[k]) + intercept ) / sqrt( slope*slope + intercept*intercept );
+	  resid[i*inner+k] = ( slope*(seed[i].x0_[k]) - (seed[i].y0_[k]) + intercept ) / ( slope*slope + intercept*intercept );
+	}
+  }
+}
 
 
 

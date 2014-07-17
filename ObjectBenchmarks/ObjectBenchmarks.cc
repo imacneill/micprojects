@@ -2,6 +2,8 @@
 #include <fstream>
 #include <cmath>
 #include <omp.h>
+#include <string>
+#include <sstream>
 
 #include "Seeds.h"
 #include "BenchmarkTools.h"
@@ -80,123 +82,194 @@ int main(){
   float *resid2DhsaScan = (float*) _mm_malloc(sizeof(float)*NENTRIES, ALLIGN);
 
 
-  std::ofstream out_2arrays_5calc;
-  out_2arrays_5calc.open("output/out_2arrays_5calc.txt");
+  // std::ofstream out_2arrays_5calc;
+  // out_2arrays_5calc.open("output/out_2arrays_5calc.txt");
 
-  std::ofstream out_3arrays_5calc;
-  out_3arrays_5calc.open("output/out_3arrays_5calc.txt");
+  // std::ofstream out_3arrays_5calc;
+  // out_3arrays_5calc.open("output/out_3arrays_5calc.txt");
 
-  std::ofstream out_4arrays_5calc;
-  out_4arrays_5calc.open("output/out_4arrays_5calc.txt");
+  // std::ofstream out_4arrays_5calc;
+  // out_4arrays_5calc.open("output/out_4arrays_5calc.txt");
 
-  std::ofstream resid_6arrays_12calc;
-  resid_6arrays_12calc.open("output/resid_6arrays_12calc.txt");
+  // std::ofstream resid_6arrays_12calc;
+  // resid_6arrays_12calc.open("output/resid_6arrays_12calc.txt");
 
-  std::ofstream resid_s6floats_12calc;
-  resid_s6floats_12calc.open("output/resid_s6floats_12calc.txt");
+  // std::ofstream resid_s6floats_12calc;
+  // resid_s6floats_12calc.open("output/resid_s6floats_12calc.txt");
 
-  std::ofstream resid_shsa_12calc;
-  resid_shsa_12calc.open("output/resid_shsa_12calc.txt");
-
-
-
-  //  for(int INNER = 8; INNER < (262144+1); INNER*=2){
-  for(int INNER = 8; INNER < (2097152+1); INNER*=2){
-
-	const int OUTER = TOTAL/INNER;
+  // std::ofstream resid_shsa_12calc;
+  // resid_shsa_12calc.open("output/resid_shsa_12calc.txt");
 
 
-	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
-	stopwatch wall_bm_a_2_4("Wall Array Reuse Cache", &get_wall_time);
-	wall_bm_a_2_4.timestart();
+
+  // //  for(int INNER = 8; INNER < (262144+1); INNER*=2){
+  // for(int INNER = 8; INNER < (2097152+1); INNER*=2){
+
+  // 	const int OUTER = TOTAL/INNER;
+
+
+  // 	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
+  // 	stopwatch wall_bm_a_2_4("Wall Array Reuse Cache", &get_wall_time);
+  // 	wall_bm_a_2_4.timestart();
+  // 	for(int i=0; i<OUTER; ++i){
+  // 	  addArrays(x0, x1, residScan2_4, 0, INNER);
+  // 	}
+  // 	wall_bm_a_2_4.timestop();
+  // 	if( wall_bm_a_2_4.done() ){ 
+  // 	  std::cout<<wall_bm_a_2_4<<" GFlops = "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_2_4.elapsed()<<std::endl; 
+  // 	  out_2arrays_5calc<<INNER<<" "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_2_4.elapsed()<<std::endl;
+  // 	}
+
+  // 	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
+  // 	stopwatch wall_bm_a_3_4("Wall Array Reuse Cache", &get_wall_time);
+  // 	wall_bm_a_3_4.timestart();
+  // 	for(int i=0; i<OUTER; ++i){
+  // 	  addArrays(x0, x1, x2, residScan3_4, 0, INNER);
+  // 	}
+  // 	wall_bm_a_3_4.timestop();
+  // 	if( wall_bm_a_3_4.done() ){ 
+  // 	  std::cout<<wall_bm_a_3_4<<" GFlops = "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_3_4.elapsed()<<std::endl; 
+  // 	  out_3arrays_5calc<<INNER<<" "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_3_4.elapsed()<<std::endl;
+  // 	}
+
+  // 	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
+  // 	stopwatch wall_bm_a_4_4("Wall Array Reuse Cache", &get_wall_time);
+  // 	wall_bm_a_4_4.timestart();
+  // 	for(int i=0; i<OUTER; ++i){
+  // 	  addArrays(x0, x1, x2, y1, residScan4_4, 0, INNER);
+  // 	}
+  // 	wall_bm_a_4_4.timestop();
+  // 	if( wall_bm_a_4_4.done() ){ 
+  // 	  std::cout<<wall_bm_a_4_4<<" GFlops = "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_4_4.elapsed()<<std::endl; 
+  // 	  out_4arrays_5calc<<INNER<<" "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_4_4.elapsed()<<std::endl;
+  // 	}
+
+
+  // 	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
+  // 	stopwatch wall_bm_a_rv("Wall Array Reuse Cache, resid vectorized", &get_wall_time);
+  // 	wall_bm_a_rv.timestart();
+  // 	for(int i=0; i<OUTER; ++i){
+  // 	  calcResidVectorized(x0, y0, x1, y1, x2, y2, residScan, 0, INNER);
+  // 	}
+  // 	wall_bm_a_rv.timestop();
+  // 	if( wall_bm_a_rv.done() ){ 
+  // 	  std::cout<<wall_bm_a_rv<<" GFlops = "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_a_rv.elapsed()<<std::endl; 
+  // 	  resid_6arrays_12calc<<INNER<<" "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_a_rv.elapsed()<<std::endl;
+  // 	}
+
+  // 	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
+  // 	stopwatch wall_bm_s_rv("Wall struct Reuse Cache, resid vectorized", &get_wall_time);
+  // 	wall_bm_s_rv.timestart();
+  // 	for(int i=0; i<OUTER; ++i){
+  // 	  calcResidVectorized(seed2D, resid2DScan, 0, INNER);
+  // 	}
+  // 	wall_bm_s_rv.timestop();
+  // 	if( wall_bm_s_rv.done() ){ 
+  // 	  std::cout<<wall_bm_s_rv<<" GFlops = "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_s_rv.elapsed()<<std::endl; 
+  // 	  resid_s6floats_12calc<<INNER<<" "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_s_rv.elapsed()<<std::endl;
+  // 	}
+
+  // 	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
+  // 	stopwatch wall_bm_shsa_rv("Wall struct hsa Reuse Cache, resid vectorized", &get_wall_time);
+  // 	wall_bm_shsa_rv.timestart();
+  // 	for(int i=0; i<OUTER; ++i){
+  // 	  calcResidVectorized(seed2Dhsa, resid2DhsaScan, 0, INNER);
+  // 	}
+  // 	wall_bm_shsa_rv.timestop();
+  // 	if( wall_bm_shsa_rv.done() ){ 
+  // 	  std::cout<<wall_bm_shsa_rv<<" GFlops = "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_shsa_rv.elapsed()<<std::endl; 
+  // 	  resid_shsa_12calc<<INNER<<" "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_shsa_rv.elapsed()<<std::endl;
+  // 	}
+
+
+  // 	// std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
+  // 	// stopwatch wall_bm_a_c("Wall Array Reuse Cache", &get_wall_time);
+  // 	// wall_bm_a_c.timestart();
+  // 	// for(int i=0; i<TOTAL; ++i){
+  // 	//   calcResidVectorized(x0, y0, x1, y1, x2, y2, residScan, 0, INNER);
+  // 	// }
+  // 	// wall_bm_a_c.timestop();
+  // 	// if( wall_bm_a_c.done() ){ std::cout<<wall_bm_a_c<<" GFlops = "<<14*(float)TOTAL*(float)INNER/1e9/wall_bm_a_c.elapsed()<<std::endl; }
+
+  // }
+
+  // out_2arrays_5calc.close();
+  // out_3arrays_5calc.close();
+  // out_4arrays_5calc.close();
+  // resid_6arrays_12calc.close();
+  // resid_s6floats_12calc.close();
+  // resid_shsa_12calc.close();
+
+
+
+  std::ofstream resid_dl_6arrays_12calc;
+  //  resid_dl_6arrays_12calc.open("output/resid_dl_6arrays_12calc.txt");
+
+  std::ofstream resid_dl_shsa_12calc;
+  //resid_dl_shsa_12calc.open("output/resid_dl_shsa_12calc.txt");
+
+  for(int ENTRIES = 8; ENTRIES < (2097152+1); ENTRIES*=8){
+   	std::cout<<ENTRIES<<std::endl;
+	//  const int ENTRIES = 2097152;
+
+
+	std::stringstream ss;
+	ss<<'e'<<ENTRIES;;
+	std::string details;
+	ss>>details;
+	std::string filea("output/resid_dl_6arrays_");
+	filea+=details;
+	filea+=std::string(".txt");
+	std::cout<<filea<<std::endl;
+	resid_dl_6arrays_12calc.open(filea.c_str());
+
+	std::string fileshsa("output/resid_dl_shsa_");
+	fileshsa+=details;
+	fileshsa+=std::string(".txt");
+	std::cout<<fileshsa<<std::endl;
+	resid_dl_shsa_12calc.open(fileshsa.c_str());
+
+
+  for(int VECTOR = 8; VECTOR < (ENTRIES+1); VECTOR*=2){
+	const int INNER = ENTRIES / VECTOR;
+	const int OUTER = 1000;
+
+
+
+	
+	std::cout<<"Scan with reuse the same cache , double loop "<<VECTOR<<std::endl;
+	stopwatch wall_bm_a_d("Wall Array Reuse Cache, resid vectorized, double loop", &get_wall_time);
+	wall_bm_a_d.timestart();
 	for(int i=0; i<OUTER; ++i){
-	  addArrays(x0, x1, residScan2_4, 0, INNER);
+	  //	  calcResidVectorized(x0, y0, x1, y1, x2, y2, residScan, 0, INNER);
+	  calcResidVectorizedDouble(x0, y0, x1, y1, x2, y2, residScan, VECTOR, INNER);
 	}
-	wall_bm_a_2_4.timestop();
-	if( wall_bm_a_2_4.done() ){ 
-	  std::cout<<wall_bm_a_2_4<<" GFlops = "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_2_4.elapsed()<<std::endl; 
-	  out_2arrays_5calc<<INNER<<" "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_2_4.elapsed()<<std::endl;
+	wall_bm_a_d.timestop();
+	if( wall_bm_a_d.done() ){ 
+	  std::cout<<wall_bm_a_d<<" GFlops = "<<12.*(float)OUTER*(float)VECTOR*(float)INNER/1e9/wall_bm_a_d.elapsed()<<std::endl; 
+	  resid_dl_6arrays_12calc<<INNER<<" "<<12.*(float)OUTER*(float)VECTOR*(float)INNER/1e9/wall_bm_a_d.elapsed()<<std::endl;
 	}
 
-	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
-	stopwatch wall_bm_a_3_4("Wall Array Reuse Cache", &get_wall_time);
-	wall_bm_a_3_4.timestart();
+	std::cout<<"Scan with reuse the same cache , double loop "<<VECTOR<<std::endl;
+	stopwatch wall_bm_sasa_d("Wall Array Reuse Cache, resid vectorized, double loop", &get_wall_time);
+	wall_bm_sasa_d.timestart();
 	for(int i=0; i<OUTER; ++i){
-	  addArrays(x0, x1, x2, residScan3_4, 0, INNER);
+	  //	  calcResidVectorized(x0, y0, x1, y1, x2, y2, residScan, 0, INNER);
+	  calcResidVectorizedDouble(x0, y0, x1, y1, x2, y2, residScan, VECTOR, INNER);
 	}
-	wall_bm_a_3_4.timestop();
-	if( wall_bm_a_3_4.done() ){ 
-	  std::cout<<wall_bm_a_3_4<<" GFlops = "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_3_4.elapsed()<<std::endl; 
-	  out_3arrays_5calc<<INNER<<" "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_3_4.elapsed()<<std::endl;
+	wall_bm_sasa_d.timestop();
+	if( wall_bm_sasa_d.done() ){ 
+	  std::cout<<wall_bm_sasa_d<<" GFlops = "<<12.*(float)OUTER*(float)VECTOR*(float)INNER/1e9/wall_bm_sasa_d.elapsed()<<std::endl; 
+	  resid_dl_shsa_12calc<<INNER<<" "<<12.*(float)OUTER*(float)VECTOR*(float)INNER/1e9/wall_bm_sasa_d.elapsed()<<std::endl;
 	}
-
-	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
-	stopwatch wall_bm_a_4_4("Wall Array Reuse Cache", &get_wall_time);
-	wall_bm_a_4_4.timestart();
-	for(int i=0; i<OUTER; ++i){
-	  addArrays(x0, x1, x2, y1, residScan4_4, 0, INNER);
-	}
-	wall_bm_a_4_4.timestop();
-	if( wall_bm_a_4_4.done() ){ 
-	  std::cout<<wall_bm_a_4_4<<" GFlops = "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_4_4.elapsed()<<std::endl; 
-	  out_4arrays_5calc<<INNER<<" "<<5.*(float)OUTER*(float)INNER/1e9/wall_bm_a_4_4.elapsed()<<std::endl;
-	}
-
-
-	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
-	stopwatch wall_bm_a_rv("Wall Array Reuse Cache, resid vectorized", &get_wall_time);
-	wall_bm_a_rv.timestart();
-	for(int i=0; i<OUTER; ++i){
-	  calcResidVectorized(x0, y0, x1, y1, x2, y2, residScan, 0, INNER);
-	}
-	wall_bm_a_rv.timestop();
-	if( wall_bm_a_rv.done() ){ 
-	  std::cout<<wall_bm_a_rv<<" GFlops = "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_a_rv.elapsed()<<std::endl; 
-	  resid_6arrays_12calc<<INNER<<" "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_a_rv.elapsed()<<std::endl;
-	}
-
-	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
-	stopwatch wall_bm_s_rv("Wall struct Reuse Cache, resid vectorized", &get_wall_time);
-	wall_bm_s_rv.timestart();
-	for(int i=0; i<OUTER; ++i){
-	  calcResidVectorized(seed2D, resid2DScan, 0, INNER);
-	}
-	wall_bm_s_rv.timestop();
-	if( wall_bm_s_rv.done() ){ 
-	  std::cout<<wall_bm_s_rv<<" GFlops = "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_s_rv.elapsed()<<std::endl; 
-	  resid_s6floats_12calc<<INNER<<" "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_s_rv.elapsed()<<std::endl;
-	}
-
-	std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
-	stopwatch wall_bm_shsa_rv("Wall struct hsa Reuse Cache, resid vectorized", &get_wall_time);
-	wall_bm_shsa_rv.timestart();
-	for(int i=0; i<OUTER; ++i){
-	  calcResidVectorized(seed2Dhsa, resid2DhsaScan, 0, INNER);
-	}
-	wall_bm_shsa_rv.timestop();
-	if( wall_bm_shsa_rv.done() ){ 
-	  std::cout<<wall_bm_shsa_rv<<" GFlops = "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_shsa_rv.elapsed()<<std::endl; 
-	  resid_shsa_12calc<<INNER<<" "<<12.*(float)OUTER*(float)INNER/1e9/wall_bm_shsa_rv.elapsed()<<std::endl;
-	}
-
-
-	// std::cout<<"Scan with reuse the same cache "<<INNER<<std::endl;
-	// stopwatch wall_bm_a_c("Wall Array Reuse Cache", &get_wall_time);
-	// wall_bm_a_c.timestart();
-	// for(int i=0; i<TOTAL; ++i){
-	//   calcResidVectorized(x0, y0, x1, y1, x2, y2, residScan, 0, INNER);
-	// }
-	// wall_bm_a_c.timestop();
-	// if( wall_bm_a_c.done() ){ std::cout<<wall_bm_a_c<<" GFlops = "<<14*(float)TOTAL*(float)INNER/1e9/wall_bm_a_c.elapsed()<<std::endl; }
-
+	
   }
 
-  out_2arrays_5calc.close();
-  out_3arrays_5calc.close();
-  out_4arrays_5calc.close();
-  resid_6arrays_12calc.close();
-  resid_s6floats_12calc.close();
-  resid_shsa_12calc.close();
+  resid_dl_6arrays_12calc.close();
+  resid_dl_shsa_12calc.close();
+  }
+  //  resid_dl_6arrays_12calc.close();
+  //  resid_dl_shsa_12calc.close();
 
   _mm_free(residScan);
   _mm_free(resid2DScan);

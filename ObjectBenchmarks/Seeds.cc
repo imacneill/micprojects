@@ -59,7 +59,18 @@ void calcResidVectorized(float *x0, float *y0, float *x1, float *y1, float *x2, 
   }
 }
 
-
+void calcResidVectorizedDouble(float *x0, float *y0, float *x1, float *y1, float *x2, float *y2, float *resid, const int inner, const int outer){
+  for(int i=0; i<outer; ++i){
+	#pragma simd
+	for(int j=0; j<inner; ++j){
+	  float slope = ((y2[i*inner+j]) - (y0[i*inner+j]))/((x2[i*inner+j]) - (x0[i*inner+j])); // 3 operations
+	  float intercept = (y0[i*inner+j]) - slope * (x0[i*inner+j]); // 2 operations
+	  //	resid[i+begin] = std::abs( slope*(x0[i*inner+j]) - (y0[i*inner+j]) + intercept ) / sqrt( slope*slope + intercept*intercept );
+	  resid[i*inner+j] = (slope*(x0[i*inner+j]) - (y0[i*inner+j]) + intercept ) / ( slope*slope + intercept*intercept ); // 7 operations
+	  // 12 operations total
+	}
+  }
+}
 
 
 
